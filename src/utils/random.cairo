@@ -1,6 +1,5 @@
 use cartridge_vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 use starknet::{ContractAddress, contract_address_const, get_caller_address, get_block_number};
-use crimson_fate::constants::{MAX_INDEX_OF_SKILL};
 use core::hash::{HashStateTrait, HashStateExTrait};
 use core::pedersen::PedersenTrait;
 
@@ -13,7 +12,7 @@ pub fn get_random_hash() -> felt252 {
     vrf_provider.consume_random(Source::Nonce(get_caller_address()))
 }
 
-pub fn get_random_index_of_skill(random_number: felt252, seed: u16) -> u16 {
+pub fn get_random_index_of_skill(random_number: felt252, seed: u16, max_index: u16) -> u16 {
     let block_number = get_block_number();
     let mut state = PedersenTrait::new(0);
     state = state.update_with(random_number);
@@ -21,6 +20,38 @@ pub fn get_random_index_of_skill(random_number: felt252, seed: u16) -> u16 {
     state = state.update_with(block_number);
     let hash: u256 = state.finalize().into();
 
-    let index = (hash % MAX_INDEX_OF_SKILL.into()) + 1;
+    let index = (hash % max_index.into());
     index.try_into().unwrap()
+}
+
+pub fn get_random_skill_from_selected_skills(
+    selected_skills: Span<felt252>, random_number: felt252
+) -> felt252 {
+    let mut can_receive_skill = ArrayTrait::new();
+    let mut i: u32 = 0;
+    while i < selected_skills.len() {
+        let skill = *selected_skills.at(i);
+        let mut count: u8 = 1;
+        let mut j = i + 1;
+        while j < selected_skills.len() {
+            if *selected_skills.at(j) == skill {
+                count += 1;
+            }
+            j += 1;
+        };
+
+        if count <= 2 {
+            can_receive_skill.append(skill);
+        }
+        i += 1;
+    };
+
+    let block_number = get_block_number();
+    let mut state = PedersenTrait::new(0);
+    state = state.update_with(random_number);
+    state = state.update_with(can_receive_skill.len());
+    state = state.update_with(block_number);
+    let hash: u256 = state.finalize().into();
+    let index = (hash % can_receive_skill.len().into());
+    *can_receive_skill.at(index.try_into().unwrap())
 }

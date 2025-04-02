@@ -11,9 +11,13 @@ pub struct StarknetDomain {
 pub struct ReceiveSkillParams {
     pub player: ContractAddress,
     pub salt_nonce: u64,
+    pub is_new_game: bool,
+    pub is_evil: bool,
 }
 
-pub const MAX_INDEX_OF_SKILL: u16 = 34;
+pub const MAX_INDEX_OF_COMMON_SKILL: u16 = 20;
+
+pub const MAX_INDEX_OF_EVIL_SKILL: u16 = 10;
 
 pub const MAX_RECEIVE_SKILL: u16 = 3;
 
@@ -21,7 +25,7 @@ pub const STARKNET_DOMAIN_TYPE_HASH: felt252 =
     selector!("StarkNetDomain(name:felt,version:felt,chainId:felt)");
 
 pub const RECEIVE_SKILL_TYPE_HASH: felt252 =
-    selector!("ReceiveSkillParams(player:ContractAddress,salt_nonce:u64)");
+    selector!("ReceiveSkillParams(player:felt,salt_nonce:felt,is_new_game:bool,is_evil:bool)");
 
 pub const STARKNET_DOMAIN_VERSION: felt252 = 1;
 

@@ -19,7 +19,7 @@ pub fn hash_receive_skill(receive_skill: @ReceiveSkillParams) -> felt252 {
     let mut state = PedersenTrait::new(0);
     state = state.update_with(RECEIVE_SKILL_TYPE_HASH);
     state = state.update_with(*receive_skill);
-    state = state.update_with(3);
+    state = state.update_with(5);
     state.finalize()
 }
 

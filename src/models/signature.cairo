@@ -1,6 +1,6 @@
 use starknet::ContractAddress;
 
-#[derive(Drop, Serde)]
+#[derive(Drop, Serde, Debug)]
 #[dojo::model]
 pub struct UsedSignature {
     #[key]
@@ -8,7 +8,7 @@ pub struct UsedSignature {
     pub is_used: bool,
 }
 
-#[derive(Drop, Serde)]
+#[derive(Drop, Serde, Debug)]
 #[dojo::model]
 pub struct Prover {
     #[key]

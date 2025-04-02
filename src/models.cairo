@@ -1,2 +1,2 @@
 pub mod signature;
-pub mod equipmentskill;
+pub mod skill;
