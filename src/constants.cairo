@@ -15,6 +15,12 @@ pub struct ReceiveSkillParams {
     pub is_evil: bool,
 }
 
+#[derive(Drop, Copy, Hash)]
+pub struct ReceiveAngelOrEvilParams {
+    pub player: ContractAddress,
+    pub salt_nonce: u64,
+}
+
 pub const MAX_INDEX_OF_COMMON_SKILL: u16 = 20;
 
 pub const MAX_INDEX_OF_EVIL_SKILL: u16 = 10;
@@ -26,6 +32,9 @@ pub const STARKNET_DOMAIN_TYPE_HASH: felt252 =
 
 pub const RECEIVE_SKILL_TYPE_HASH: felt252 =
     selector!("ReceiveSkillParams(player:felt,salt_nonce:felt,is_new_game:bool,is_evil:bool)");
+
+pub const RECEIVE_ANGEL_OR_EVIL_TYPE_HASH: felt252 =
+    selector!("ReceiveAngelOrEvilParams(player:felt,salt_nonce:felt)");
 
 pub const STARKNET_DOMAIN_VERSION: felt252 = 1;
 

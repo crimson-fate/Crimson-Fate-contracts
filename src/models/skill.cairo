@@ -5,14 +5,14 @@ use starknet::ContractAddress;
 pub struct PlayerProgress {
     #[key]
     pub player: ContractAddress,
-    pub skills: Array<felt252>,
+    pub skills: Array<SelectedSkill>,
 }
 
-// #[derive(Drop, Copy, Serde, Introspect, Debug)]
-// pub struct SelectedSkill {
-//     pub skill: felt252,
-//     pub level: u8,
-// }
+#[derive(Drop, Copy, Serde, Introspect, Debug)]
+pub struct SelectedSkill {
+    pub skill: felt252,
+    pub is_evil: bool,
+}
 
 #[derive(Drop, Copy, Serde, Debug)]
 #[dojo::model]
@@ -26,7 +26,7 @@ pub struct CurrentReceiveSkill {
 
 #[derive(Drop, Copy, Serde, Debug)]
 #[dojo::model]
-pub struct AngelOrEvil {
+pub struct CurrentAngelOrEvil {
     #[key]
     pub player: ContractAddress,
     pub is_evil: bool,
@@ -75,6 +75,12 @@ pub enum EvilSkill {
     Holy_Light,
     Toxic_Explose,
     Acid_Rain,
+}
+
+#[derive(Drop, Copy, Serde, PartialEq, Introspect, Debug)]
+pub enum AngelOrEvil {
+    Angel,
+    Evil
 }
 
 impl CommonSkillImpl of Into<CommonSkill, felt252> {
