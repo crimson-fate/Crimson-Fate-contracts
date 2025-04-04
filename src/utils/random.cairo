@@ -27,25 +27,27 @@ pub fn get_random_index_of_skill(random_number: felt252, seed: u16, max_index: u
 
 pub fn get_random_skill_from_selected_skills(
     selected_skills: Span<SelectedSkill>, random_number: felt252
-) -> felt252 {
+) -> SelectedSkill {
     let mut can_receive_skill = ArrayTrait::new();
     let mut i: u32 = 0;
     while i < selected_skills.len() {
-        let skill = *selected_skills.at(i).skill;
+        let skill = *selected_skills.at(i);
         let mut count: u8 = 1;
-        let mut j = i + 1;
+        let mut j: u32 = 0;
         while j < selected_skills.len() {
-            if *selected_skills.at(j).skill == skill {
+            if j != i && *selected_skills.at(j).skill == skill.skill {
                 count += 1;
             }
             j += 1;
         };
 
-        if count <= 2 {
+        if count <= 3 {
             can_receive_skill.append(skill);
         }
         i += 1;
     };
+
+    assert(can_receive_skill.len() > 0, 'no skill to receive');
 
     let block_number = get_block_number();
     let mut state = PedersenTrait::new(0);

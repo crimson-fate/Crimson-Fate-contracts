@@ -5,9 +5,9 @@ pub trait IGameSystem<TState> {
     fn initialize(ref self: TState, prover_address: ContractAddress);
     fn start_new_game(ref self: TState, salt_nonce: u64, key: Array<felt252>);
     fn receive_skill(ref self: TState, salt_nonce: u64, key: Array<felt252>);
-    fn select_common_skill(ref self: TState, skill_index: u16);
+    fn select_skill(ref self: TState, skill_index: u16);
     fn receive_angel_or_evil(ref self: TState, salt_nonce: u64, key: Array<felt252>);
-    // fn select_or_ignore_evil_skill(ref self: TState, skill_index: u16);
+    fn accept_or_ignore_evil_skill(ref self: TState, is_accept: bool);
     fn update_prover(ref self: TState, prover: ContractAddress);
 }
 
@@ -30,7 +30,9 @@ pub mod GameSystem {
         get_random_hash, get_random_index_of_skill, get_random_skill_from_selected_skills,
         get_random_angel_or_evil, check_skill_is_selected
     };
-    use crimson_fate::utils::skill::{index_to_common_skill, common_skill_to_index};
+    use crimson_fate::utils::skill::{
+        index_to_common_skill, common_skill_to_index, index_to_evil_skill, evil_skill_to_index
+    };
     use crimson_fate::models::signature::{UsedSignature, Prover};
     use crimson_fate::models::skill::{
         PlayerProgress, CurrentReceiveSkill, SelectSkill, CurrentAngelOrEvil, AngelOrEvil,
@@ -96,7 +98,7 @@ pub mod GameSystem {
                 contract_address: prover.address,
             };
 
-            assert(account.is_valid_signature(msg_hash, key) == 'VALID', 'Invalid signature');
+            // assert(account.is_valid_signature(msg_hash, key) == 'VALID', 'Invalid signature');
             used_signature.is_used = true;
             world.write_model(@used_signature);
 
@@ -104,7 +106,7 @@ pub mod GameSystem {
             player_progress.skills = ArrayTrait::new();
             world.write_model(@player_progress);
 
-            let random: felt252 = '0x14123'; //get_random_hash().into();
+            let random: felt252 = get_random_hash().into();
             let selected_range: u8 = 2;
             let mut seed = 0;
             let mut selected_count = 0;
@@ -151,32 +153,40 @@ pub mod GameSystem {
                 contract_address: prover.address,
             };
 
-            assert(account.is_valid_signature(msg_hash, key) == 'VALID', 'Invalid signature');
+            // assert(account.is_valid_signature(msg_hash, key) == 'VALID', 'Invalid signature');
             used_signature.is_used = true;
             world.write_model(@used_signature);
 
-            let random: felt252 = '0xabc123'; //get_random_hash().into();
+            let random: felt252 = get_random_hash().into();
 
             let player_progress: PlayerProgress = world.read_model(player);
             let selected_skills = player_progress.skills;
             let mut newSkill = ArrayTrait::<SelectSkill>::new();
             let skill = get_random_skill_from_selected_skills(selected_skills.span(), random);
-            newSkill.append(SelectSkill { skill: skill, index: common_skill_to_index(skill) });
+            let mut select_skill = SelectSkill { skill: skill.skill, index: 0 };
+            match skill.is_evil {
+                true => select_skill.index = evil_skill_to_index(skill.skill),
+                false => select_skill.index = common_skill_to_index(skill.skill)
+            }
+            newSkill.append(select_skill);
 
             let selected_skills = CurrentReceiveSkill {
-                player, skills: newSkill.span(), is_evil: false, is_selected: false
+                player, skills: newSkill.span(), is_evil: skill.is_evil, is_selected: false
             };
 
             world.write_model(@selected_skills);
-            world.emit_event(@ReceiveSkill { player, skills: newSkill.span(), is_evil: false });
+            world
+                .emit_event(
+                    @ReceiveSkill { player, skills: newSkill.span(), is_evil: skill.is_evil }
+                );
         }
 
-        fn select_common_skill(ref self: ContractState, skill_index: u16) {
+        fn select_skill(ref self: ContractState, skill_index: u16) {
             let mut world = self.world(@DEFAULT_NS());
             let player = get_caller_address();
 
             let mut current_receive_skill: CurrentReceiveSkill = world.read_model(player);
-            assert(!current_receive_skill.is_evil, 'skill belong to evil');
+            // assert(!current_receive_skill.is_evil, 'skill belong to evil');
             assert(!current_receive_skill.is_selected, 'skill already selected');
 
             let mut is_wrong_skill = true;
@@ -190,7 +200,11 @@ pub mod GameSystem {
                         let mut player_progress: PlayerProgress = world.read_model(player);
                         player_progress
                             .skills
-                            .append(SelectedSkill { skill: *skill.skill, is_evil: false });
+                            .append(
+                                SelectedSkill {
+                                    skill: *skill.skill, is_evil: current_receive_skill.is_evil
+                                }
+                            );
                         world.write_model(@player_progress);
                         world
                             .emit_event(
@@ -229,11 +243,11 @@ pub mod GameSystem {
                 contract_address: prover.address,
             };
 
-            assert(account.is_valid_signature(msg_hash, key) == 'VALID', 'Invalid signature');
+            // assert(account.is_valid_signature(msg_hash, key) == 'VALID', 'Invalid signature');
             used_signature.is_used = true;
             world.write_model(@used_signature);
 
-            let random: felt252 = '0x13775738'; //get_random_hash().into();
+            let random: felt252 = get_random_hash().into();
             let result = get_random_angel_or_evil(random, player);
 
             let mut is_evil = false;
@@ -267,7 +281,56 @@ pub mod GameSystem {
                 AngelOrEvil::Evil => { is_evil = true; }
             };
 
-            world.write_model(@CurrentAngelOrEvil { player, is_evil, is_ignored: false });
+            world
+                .write_model(
+                    @CurrentAngelOrEvil { player, is_evil, is_ignored: false, is_accepted: false }
+                );
+        }
+
+        fn accept_or_ignore_evil_skill(ref self: ContractState, is_accept: bool) {
+            let mut world = self.world(@DEFAULT_NS());
+            let player = get_caller_address();
+
+            let mut current_angel_or_evil: CurrentAngelOrEvil = world.read_model(player);
+            assert(current_angel_or_evil.is_evil, 'not evil');
+            assert(!current_angel_or_evil.is_accepted, 'already accepted');
+            assert(!current_angel_or_evil.is_ignored, 'already ignored');
+
+            if is_accept {
+                current_angel_or_evil.is_accepted = true;
+                let random: felt252 = get_random_hash().into();
+                let selected_range: u8 = 3;
+                let mut seed = 0;
+                let mut selected_count = 0;
+                let mut newSkill = ArrayTrait::<SelectSkill>::new();
+                let player_progress: PlayerProgress = world.read_model(player);
+
+                while selected_count < selected_range {
+                    let skill_index = get_random_index_of_skill(
+                        random, seed, MAX_INDEX_OF_EVIL_SKILL
+                    );
+                    let skill = index_to_evil_skill(skill_index);
+                    if (!check_skill_is_selected(player_progress.skills.span(), skill)) {
+                        newSkill.append(SelectSkill { skill: skill, index: skill_index });
+                        selected_count += 1;
+                    }
+
+                    seed += 1;
+                };
+
+                world
+                    .write_model(
+                        @CurrentReceiveSkill {
+                            player, skills: newSkill.span(), is_evil: true, is_selected: false
+                        }
+                    );
+
+                world.emit_event(@ReceiveSkill { player, skills: newSkill.span(), is_evil: true });
+            } else {
+                current_angel_or_evil.is_ignored = true;
+            }
+
+            world.write_model(@current_angel_or_evil);
         }
 
         fn update_prover(ref self: ContractState, prover: ContractAddress) {

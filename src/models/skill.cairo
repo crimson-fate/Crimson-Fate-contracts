@@ -31,6 +31,7 @@ pub struct CurrentAngelOrEvil {
     pub player: ContractAddress,
     pub is_evil: bool,
     pub is_ignored: bool,
+    pub is_accepted: bool,
 }
 
 #[derive(Drop, Copy, Serde, Introspect, Debug)]

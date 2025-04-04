@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x1bcc2b2db46807816c18b2e47dd86e72d94e6703cfe18eec4ffb1ec17c2dc49",
-      "class_hash": "0x23e0408dc859e27ddf9ef7cd795c55308b71d3ac51c04c3978d92aaddd8f403",
+      "address": "0x1207f21d37b12537a9bf2290bca1f90d5c8307446a887ece215b949fc5a9452",
+      "class_hash": "0x26b148b2779450dd47f4d331603cf8b72f996b348e7f929b7190d25f61c9204",
       "abi": [
         {
           "type": "impl",
@@ -1311,6 +1311,20 @@
           "interface_name": "crimson_fate::systems::game::IGameSystem"
         },
         {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
           "type": "interface",
           "name": "crimson_fate::systems::game::IGameSystem",
           "items": [
@@ -1328,6 +1342,22 @@
             },
             {
               "type": "function",
+              "name": "start_new_game",
+              "inputs": [
+                {
+                  "name": "salt_nonce",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
               "name": "receive_skill",
               "inputs": [
                 {
@@ -1337,6 +1367,46 @@
                 {
                   "name": "key",
                   "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "select_skill",
+              "inputs": [
+                {
+                  "name": "skill_index",
+                  "type": "core::integer::u16"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "receive_angel_or_evil",
+              "inputs": [
+                {
+                  "name": "salt_nonce",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "accept_or_ignore_evil_skill",
+              "inputs": [
+                {
+                  "name": "is_accept",
+                  "type": "core::bool"
                 }
               ],
               "outputs": [],
@@ -1476,7 +1546,11 @@
       "selector": "0x47cb9e49ade35fa313d2ff33afbf5c9f6ca09bda823f2770ea2556a0d396cab",
       "systems": [
         "initialize",
+        "start_new_game",
         "receive_skill",
+        "select_skill",
+        "receive_angel_or_evil",
+        "accept_or_ignore_evil_skill",
         "update_prover",
         "upgrade"
       ]
@@ -1485,9 +1559,21 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x1592a8858855c77537f97ee4dc794fc5f9f9bc3ee845e99c0b338343626d7d8",
+      "class_hash": "0x60d5efdc652280d8bad6c6884ed3a0b0c5fb4903574ad00be436f4cb098ac37",
+      "tag": "cf-CurrentAngelOrEvil",
+      "selector": "0x5048a329b3ff1c019091755fc901b023827ab787c3b8396ca909dda6b01d786"
+    },
+    {
+      "members": [],
+      "class_hash": "0x578b2b89b7992cfe7a788dfdbbb6a1009e1bc6d82b85066a1db915a41d1cec0",
       "tag": "cf-CurrentReceiveSkill",
       "selector": "0x3a1be16e4e5b535a8f4fbbc5a6f7b74819212b498ef5359c137a407329bf5bd"
+    },
+    {
+      "members": [],
+      "class_hash": "0x4036a6fa3ad38d68b8e3eaa41a1ec3026991eeb34c7c424bb15571d8ee9bc76",
+      "tag": "cf-PlayerProgress",
+      "selector": "0x650933ae9d4dbe98699da6f90e918966a130552471181b8d20b5bb4b88abe95"
     },
     {
       "members": [],
@@ -1505,7 +1591,13 @@
   "events": [
     {
       "members": [],
-      "class_hash": "0x11e82a3c9a4dd113f58d391c69c5db2dd26d76e4d27c12045402362a4c9d213",
+      "class_hash": "0x69893134b2b7bd47bb7312f76baa9a7dfeeb762ac2d92ca26758273d8ff7be5",
+      "tag": "cf-ChooseSkill",
+      "selector": "0x4a4bd3fa5a32920a1006fc591ca1bf441af91af36fea0f597fbf7a3ee0d52e9"
+    },
+    {
+      "members": [],
+      "class_hash": "0x702ebf818f9aeedd2a520d15b485355aa93c34731bced2302badd23ef383edd",
       "tag": "cf-ReceiveSkill",
       "selector": "0x563b873af71c5c6f7df7cc476f31bfa45fdc089b9a54c8cfcdcd9fb62b294"
     }

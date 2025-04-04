@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x61f9cde1685f6b75cd575de0756dae25a966d6f8232a7e86de1e9191d428a8c",
-    "seed": "cf_05",
+    "address": "0x777931bd99136a82cb3c8edd06826dad6070092dba4f00ca967414ebc46a38b",
+    "seed": "cf_07",
     "name": "Crimson Fate",
     "entrypoints": [
       "uuid",
@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x5dd96bb0ff803add6cca4adeabd68899c9da81552ec37faffff3b51ab6c03c5",
-      "class_hash": "0x7338492a4d135210088c0722412b415a064699f3e663d905af7dc1cbbbc2c2d",
+      "address": "0x31e44d5c84c57f00aad386df0a93d9254606778260445e2d75ddcba1be12d03",
+      "class_hash": "0x7df1b8f68911f3ed1b7d3fa851f4db31162cef0815cb7fb48d8b03ba686de45",
       "abi": [
         {
           "type": "impl",
@@ -1311,6 +1311,20 @@
           "interface_name": "crimson_fate::systems::game::IGameSystem"
         },
         {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
+        },
+        {
           "type": "interface",
           "name": "crimson_fate::systems::game::IGameSystem",
           "items": [
@@ -1360,11 +1374,39 @@
             },
             {
               "type": "function",
-              "name": "select_common_skill",
+              "name": "select_skill",
               "inputs": [
                 {
                   "name": "skill_index",
                   "type": "core::integer::u16"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "receive_angel_or_evil",
+              "inputs": [
+                {
+                  "name": "salt_nonce",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "accept_or_ignore_evil_skill",
+              "inputs": [
+                {
+                  "name": "is_accept",
+                  "type": "core::bool"
                 }
               ],
               "outputs": [],
@@ -1506,7 +1548,9 @@
         "initialize",
         "start_new_game",
         "receive_skill",
-        "select_common_skill",
+        "select_skill",
+        "receive_angel_or_evil",
+        "accept_or_ignore_evil_skill",
         "update_prover",
         "upgrade"
       ]
@@ -1515,9 +1559,9 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x280cd9c43aa7c5064123753e67dd5aa807224d8ee51a6825275068384c57cc1",
-      "tag": "cf-AngelOrEvil",
-      "selector": "0xd99f62b44333bedb34fcbc6c7ca0dca7a6bc8d7bc9b064f0bb2e85d3749484"
+      "class_hash": "0x60d5efdc652280d8bad6c6884ed3a0b0c5fb4903574ad00be436f4cb098ac37",
+      "tag": "cf-CurrentAngelOrEvil",
+      "selector": "0x5048a329b3ff1c019091755fc901b023827ab787c3b8396ca909dda6b01d786"
     },
     {
       "members": [],
@@ -1527,7 +1571,7 @@
     },
     {
       "members": [],
-      "class_hash": "0x288069be13065259b189b5d6d462a6406508c801d05e885ccb9bbf86b892d71",
+      "class_hash": "0x4036a6fa3ad38d68b8e3eaa41a1ec3026991eeb34c7c424bb15571d8ee9bc76",
       "tag": "cf-PlayerProgress",
       "selector": "0x650933ae9d4dbe98699da6f90e918966a130552471181b8d20b5bb4b88abe95"
     },

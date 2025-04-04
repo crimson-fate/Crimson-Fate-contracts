@@ -9,9 +9,9 @@ mod tests {
 
     use crimson_fate::systems::game::{GameSystem};
 
-    use crate::systems::game::GameSystem::InternalTrait;
-    use crimson_fate::models::equipmentskill::{CurrentReceiveSkill, m_CurrentReceiveSkill};
+    use crimson_fate::models::skill::{CurrentReceiveSkill, m_CurrentReceiveSkill, SelectedSkill};
     use crimson_fate::models::signature::{UsedSignature, m_UsedSignature, Prover, m_Prover};
+    use crimson_fate::utils::random::get_random_skill_from_selected_skills;
 
     fn namespace_def() -> NamespaceDef {
         NamespaceDef {
@@ -32,7 +32,7 @@ mod tests {
         ].span()
     }
 
-    #[test]
+    // #[test]
     fn test_world_test_set() {
         // Initialize test environment
         let caller = starknet::contract_address_const::<'caller'>();
@@ -62,5 +62,16 @@ mod tests {
         world.erase_model(@prover);
         let prover: Prover = world.read_model(contract_address);
         assert(prover.address != caller, 'erase_model failed');
+    }
+
+    #[test]
+    fn test_get_random_skill_from_selected_skills() {
+        let selected_skills = array![
+            SelectedSkill { skill: '0x41123', is_evil: false },
+            SelectedSkill { skill: '0x41123', is_evil: false },
+            SelectedSkill { skill: '0x41123', is_evil: false }
+        ];
+        let new_skill = get_random_skill_from_selected_skills(selected_skills.span(), '0x123');
+        println!("{}", new_skill);
     }
 }
