@@ -22,6 +22,7 @@ pub struct CurrentReceiveSkill {
     pub skills: Span<SelectSkill>,
     pub is_evil: bool,
     pub is_selected: bool,
+    pub tx_hash: felt252,
 }
 
 #[derive(Drop, Copy, Serde, Debug)]
@@ -32,6 +33,7 @@ pub struct CurrentAngelOrEvil {
     pub is_evil: bool,
     pub is_ignored: bool,
     pub is_accepted: bool,
+    pub tx_hash: felt252,
 }
 
 #[derive(Drop, Copy, Serde, Introspect, Debug)]
@@ -81,7 +83,7 @@ pub enum EvilSkill {
 #[derive(Drop, Copy, Serde, PartialEq, Introspect, Debug)]
 pub enum AngelOrEvil {
     Angel,
-    Evil
+    Evil,
 }
 
 impl CommonSkillImpl of Into<CommonSkill, felt252> {
@@ -106,7 +108,7 @@ impl CommonSkillImpl of Into<CommonSkill, felt252> {
             CommonSkill::Radiance => 'Radiance',
             CommonSkill::Toxic_Swamp => 'Toxic_Swamp',
             CommonSkill::Venom_Shot => 'Venom_Shot',
-            CommonSkill::Plague_Ward => 'Plague_Ward'
+            CommonSkill::Plague_Ward => 'Plague_Ward',
         }
     }
 }

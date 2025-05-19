@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x45575a88cc5cef1e444c77ce60b7b4c9e73a01cbbe20926d5a4c72a94011410",
-    "address": "0x777931bd99136a82cb3c8edd06826dad6070092dba4f00ca967414ebc46a38b",
-    "seed": "cf_07",
+    "address": "0x2e7f57a671b3bc178985db5598c2a0bd68c2b61b1d9afed5e050c12c1d27592",
+    "seed": "cf_09",
     "name": "Crimson Fate",
     "entrypoints": [
       "uuid",
@@ -1252,8 +1252,8 @@
   },
   "contracts": [
     {
-      "address": "0x31e44d5c84c57f00aad386df0a93d9254606778260445e2d75ddcba1be12d03",
-      "class_hash": "0x7df1b8f68911f3ed1b7d3fa851f4db31162cef0815cb7fb48d8b03ba686de45",
+      "address": "0x214c52630cfeaaa3ba22332cef24ab1729144bb67b4bfcbf9cd3829620807e0",
+      "class_hash": "0x44566b6f6f9879989313c0d084a0c86faa4b73a611aa356de5c5f3a656b7ad7",
       "abi": [
         {
           "type": "impl",
@@ -1325,6 +1325,20 @@
           ]
         },
         {
+          "type": "struct",
+          "name": "core::integer::u256",
+          "members": [
+            {
+              "name": "low",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "high",
+              "type": "core::integer::u128"
+            }
+          ]
+        },
+        {
           "type": "interface",
           "name": "crimson_fate::systems::game::IGameSystem",
           "items": [
@@ -1334,6 +1348,10 @@
               "inputs": [
                 {
                   "name": "prover_address",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "vrf_address",
                   "type": "core::starknet::contract_address::ContractAddress"
                 }
               ],
@@ -1419,6 +1437,66 @@
                 {
                   "name": "prover",
                   "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "request_valor",
+              "inputs": [
+                {
+                  "name": "duration",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "salt_nonce",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "bribe_valor",
+              "inputs": [
+                {
+                  "name": "amount",
+                  "type": "core::integer::u256"
+                },
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "claim_chest",
+              "inputs": [
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "open_chest",
+              "inputs": [
+                {
+                  "name": "key",
+                  "type": "core::array::Array::<core::felt252>"
                 }
               ],
               "outputs": [],
@@ -1552,6 +1630,10 @@
         "receive_angel_or_evil",
         "accept_or_ignore_evil_skill",
         "update_prover",
+        "request_valor",
+        "bribe_valor",
+        "claim_chest",
+        "open_chest",
         "upgrade"
       ]
     }
@@ -1559,13 +1641,13 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x60d5efdc652280d8bad6c6884ed3a0b0c5fb4903574ad00be436f4cb098ac37",
+      "class_hash": "0x7134b6db5e7fad2ee2cefa6db64c2629c3f6c402c756780cac0a1b30ccbff7f",
       "tag": "cf-CurrentAngelOrEvil",
       "selector": "0x5048a329b3ff1c019091755fc901b023827ab787c3b8396ca909dda6b01d786"
     },
     {
       "members": [],
-      "class_hash": "0x578b2b89b7992cfe7a788dfdbbb6a1009e1bc6d82b85066a1db915a41d1cec0",
+      "class_hash": "0x653fef6ac9e9ab66f8eff090177a85dd5389314425cdce95468bb06703bff02",
       "tag": "cf-CurrentReceiveSkill",
       "selector": "0x3a1be16e4e5b535a8f4fbbc5a6f7b74819212b498ef5359c137a407329bf5bd"
     },
@@ -1586,14 +1668,50 @@
       "class_hash": "0x5aabd15566efb27e1a3a53edaab2997f4bcad27ce2ab549c4e19373c5bf6bcc",
       "tag": "cf-UsedSignature",
       "selector": "0xfb0e6ead1ddb44ad6f1a226312b27ecb46e55faff635fd5513be6acce9b57b"
+    },
+    {
+      "members": [],
+      "class_hash": "0x61fa245fb2db5887d9fe4509bca170e5b9538b9845f06225acb5b013695c44f",
+      "tag": "cf-ValorProgress",
+      "selector": "0x1c3b3b22e4b0c785bd8a7644afe05c6e75256d21c98fdaeb3aab77437f9b730"
+    },
+    {
+      "members": [],
+      "class_hash": "0x288d95b4a26f818f6f1217320e923cd1d5f2c260468ea64e44de448f708da94",
+      "tag": "cf-ValorProgressCounter",
+      "selector": "0x533d679ecef1d51942f5206124a117b4b92c3f2bfac9852ad3188a88c8b894a"
     }
   ],
   "events": [
     {
       "members": [],
+      "class_hash": "0x2451162929ad064f07250b9909eb2a3b18f2d88f577c6b44e5da4b3d502571b",
+      "tag": "cf-BribeValor",
+      "selector": "0x4c61bbd7756b7138d108af827cf86a438659e17a473b618a5591c02537f7733"
+    },
+    {
+      "members": [],
       "class_hash": "0x69893134b2b7bd47bb7312f76baa9a7dfeeb762ac2d92ca26758273d8ff7be5",
       "tag": "cf-ChooseSkill",
       "selector": "0x4a4bd3fa5a32920a1006fc591ca1bf441af91af36fea0f597fbf7a3ee0d52e9"
+    },
+    {
+      "members": [],
+      "class_hash": "0x100d22486aaeadeb82b0f3d9bf4e0a95105b585efc51863b8d4fd5df71ae8ed",
+      "tag": "cf-CreateNewGame",
+      "selector": "0x439108a1c650e5a8ed130119b0efd8c0400257c5c8ec22e1c3f26ab4fd13063"
+    },
+    {
+      "members": [],
+      "class_hash": "0x6fbc8189875795ea50a170e829d21bd0af447a69bec218bdc07288d1e88e09b",
+      "tag": "cf-OpenChest",
+      "selector": "0x647b687a5c686d051c192c8257aadbe430f497cd092a061dd2c7f15815e7e1b"
+    },
+    {
+      "members": [],
+      "class_hash": "0x4f07c5314968a9d3f474ec3cea1d6839734b30439bf9bfd5e960a064bc6ed8",
+      "tag": "cf-ReceiveAngelOrEvil",
+      "selector": "0x49d9a16905f80a2a07a17677e6b79d3570348af91a47e7f859fe4936307612c"
     },
     {
       "members": [],

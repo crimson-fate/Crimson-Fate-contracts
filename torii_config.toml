@@ -1,5 +1,5 @@
 # The World address to index.
-world_address = "0x6d1214095aa70c256c67199bd2f6dae4d5e9755311b973aad6004ed8537a45f"
+world_address = "0x0777931bd99136a82cb3c8edd06826dad6070092dba4f00ca967414ebc46a38b"
  
 # Default RPC URL configuration
 rpc = "https://api.cartridge.gg/x/starknet/sepolia"
@@ -37,7 +37,7 @@ blocks_chunk_size = 10240    # Blocks to process before DB commit
 index_pending = true         # Enable indexing pending blocks
 polling_interval = 500       # Polling interval in milliseconds
 max_concurrent_tasks = 100   # Maximum concurrent indexing tasks
-index_transactions = false   # Whether to index world transactions
+transactions = true   # Whether to index world transactions
 contracts = [                # ERC contracts to index
 ]
  
